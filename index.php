@@ -1,4 +1,6 @@
-<?php require_once __DIR__ . '/ws/config.php'; ?>
+<?php require_once __DIR__ . '/ws/config.php';
+header('location:ws/');
+?>
 
 <!DOCTYPE html>
 <html lang="fr">

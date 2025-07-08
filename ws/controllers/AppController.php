@@ -2,7 +2,7 @@
 
 class AppController {
     public function home() {
-        Flight::render("home.php");
+        Flight::render("capital.php");
     }
 
     public function prets() {
@@ -21,5 +21,9 @@ class AppController {
     }
     public function demandeNonValide() {
         Flight::render("demandes_non_valide.php");
+    }
+
+    public function montant() {
+        Flight::render("montant_total_par_mois.php");
     }
 }

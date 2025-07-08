@@ -136,16 +136,35 @@
             ajax("GET", "/mouvements", null, (data) => {
                 const tbody = document.querySelector("#table-capital");
                 tbody.innerHTML = "";
+
+                let montantDepot = 0;
+                let montantInteret = 0;
+                let montantRetrait = 0;
                 let montants = [];
 
                 data.forEach(e => {
-                    montants.push(parseFloat(e.montant));
+                    const montant = parseFloat(e.montant);
+                    montants.push(montant);
+
+                    // Calcul du montant total en fonction du type
+                    switch (parseInt(e.id_type_mouvement)) {
+                        case 1:
+                            montantDepot += montant;
+                            break;
+                        case 2:
+                            montantInteret += montant;
+                            break;
+                        case 3:
+                            montantRetrait += montant;
+                            break;
+                    }
+
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
                         <td>${e.id}</td>
                         <td>${e.date_mouvement}</td>
                         <td>${e.type_mouvement}</td>
-                        <td>${e.montant}</td>
+                        <td>${montant.toFixed(2)}</td>
                         <td>${e.id_capital}</td>
                         <td>
                             <button class="btn-primary" onclick='remplirFormulaire(${JSON.stringify(e)})'>Modifier</button>
@@ -155,14 +174,19 @@
                     tbody.appendChild(tr);
                 });
 
+                // Mise à jour des statistiques
                 document.getElementById("stat-total").textContent = data.length;
+
+                const montantTotal = montantDepot + montantInteret - montantRetrait;
+                document.getElementById("stat-total-montant").textContent = montantTotal.toFixed(2);
+
                 if (montants.length > 0) {
-                    document.getElementById("stat-total-montant").textContent = montants.reduce((a, b) => a + b, 0).toFixed(2);
                     document.getElementById("stat-min").textContent = Math.min(...montants).toFixed(2);
                     document.getElementById("stat-max").textContent = Math.max(...montants).toFixed(2);
                 }
             });
         }
+
 
         function ajouterOuModifier() {
             const id = document.getElementById("id").value;

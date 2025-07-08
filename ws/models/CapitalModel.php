@@ -9,24 +9,52 @@ class CapitalModel
     {
         $this->db = getDB();
     }
-    public function getCapitalEnCours() {
+    public function getCapitalEnCours()
+    {
         $stmt = $this->db->query("SELECT montant FROM capital LIMIT 1");
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? $row['montant'] : 0;
     }
-    
-    public function updateCapitalEnCours($montant){
-        $stmt = $this->db->prepare("
-        UPDATE capital
-        SET montant = ?   
-    ");
-    return $stmt->execute([$montant]);
-}
+
+    public function updateCapitalEnCours($montant)
+    {
+        try {
+            $montant_actu = $this->getCapitalEnCours();
+            // Démarrer une transaction
+            $this->db->beginTransaction();
+
+            // Étape 1 : Mise à jour du capital
+            $stmtUpdate = $this->db->prepare("UPDATE capital SET montant = ? WHERE id = ?");
+            $stmtUpdate->execute([$montant, 1]);
+
+            // Étape 2 : Insertion dans mouvement_capital
+            $stmtInsert = $this->db->prepare("
+            INSERT INTO mouvement_capital (date_mouvement, id_type_mvt, montant, id_capital)
+            VALUES (?, ?, ?, ?)
+        ");
+            $stmtInsert->execute([
+                date('Y-m-d'),
+                3,                 
+                abs($montant_actu - $montant), 
+                1
+            ]);
+
+            // Commit si tout est bon
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
 
     public function getAll()
     {
         $stmt = $this->db->query("
             SELECT m.id, m.date_mouvement, m.montant, m.id_capital,
+                   t.id AS id_type_mouvement,
                    t.nom AS type_mouvement
             FROM mouvement_capital m
             JOIN type_mouvement t ON m.id_type_mvt = t.id
