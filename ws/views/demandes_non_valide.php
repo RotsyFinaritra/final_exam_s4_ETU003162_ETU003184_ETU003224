@@ -280,11 +280,15 @@
 
         // Fonctions pour les actions
         function remplirFormulaire(item) {
-            if(confirm(`Voulez-vous vraiment valider la demande du client ${item.id_client} ?`)) {
+            if (confirm(`Voulez-vous vraiment valider la demande du client ${item.id_client} ?`)) {
                 const dataEncoded = toUrlEncoded(item);
-                ajax("POST", "/demandes", dataEncoded, () => {
-                    console.log('Demande validée:', item);
-                    chargerDemandes();
+                ajax("POST", "/demandes", dataEncoded, (response) => {
+                    if (response.message === 'Demande non validée') {
+                        alert(` ${response.message}\nCapital actuel : ${response.capital} Ar`);
+                    } else {
+                        alert(` ${response.message}`);
+                        chargerDemandes();
+                    }
                 });
             }
         }
