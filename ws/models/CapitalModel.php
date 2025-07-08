@@ -9,6 +9,19 @@ class CapitalModel
     {
         $this->db = getDB();
     }
+    public function getCapitalEnCours() {
+        $stmt = $this->db->query("SELECT montant FROM capital LIMIT 1");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $row['montant'] : 0;
+    }
+    
+    public function updateCapitalEnCours($montant){
+        $stmt = $this->db->prepare("
+        UPDATE capital
+        SET montant = ?   
+    ");
+    return $stmt->execute([$montant]);
+}
 
     public function getAll()
     {
