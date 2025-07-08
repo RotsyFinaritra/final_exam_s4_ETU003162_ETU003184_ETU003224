@@ -37,17 +37,23 @@
         <div class="section-header">
             <div>
                 <h2>Intérêts Gagnés</h2>
-                <p>Suivi des revenus d'intérêts de l'établissement financier</p>
+                <p>Suivi des revenus d'intérêts de l'établissement financier, Veuillez entrez les mois et dates pour voir l interet percu</p>
             </div>
             <div class="filter-controls">
                 <div class="filter-group">
                     <label>Période Début:</label>
-                    <input type="month" id="moisDebut" onchange="filterInterests()">
+                    <!-- <input type="month" id="moisDebut" onchange="filterInterests()"> -->
+                    <input type="number" id="moisDebut" >
+                    <input type="number" id="anneeDebut">
+
                 </div>
                 <div class="filter-group">
                     <label>Période Fin:</label>
-                    <input type="month" id="moisFin" onchange="filterInterests()">
+                    <!-- <input type="month" id="moisFin" onchange="filterInterests()"> -->
+                    <input type="number" id="moisFin" >
+                    <input type="number" id="anneeFin">
                 </div>
+                <button class="btn-secondary" onclick="filterInterests()">Filtrer</button>
                 <button class="btn-secondary" onclick="resetFilters()">Réinitialiser</button>
                 <button class="btn-primary" onclick="exportData()">Exporter</button>
             </div>
@@ -62,7 +68,7 @@
                 </div>
                 <div class="stat-content">
                     <h3>Total Intérêts</h3>
-                    <p class="stat-value" id="total-interets">0 €</p>
+                    <p class="stat-value" id="total-interets">0 MGA</p>
                 </div>
             </div>
             <div class="stat-card">
@@ -76,7 +82,7 @@
                 </div>
                 <div class="stat-content">
                     <h3>Ce Mois</h3>
-                    <p class="stat-value" id="interets-mois">0 €</p>
+                    <p class="stat-value" id="interets-mois">0 MGA</p>
                 </div>
             </div>
             <div class="stat-card">
@@ -88,7 +94,7 @@
                 </div>
                 <div class="stat-content">
                     <h3>Moyenne Mensuelle</h3>
-                    <p class="stat-value" id="moyenne-mensuelle">0 €</p>
+                    <p class="stat-value" id="moyenne-mensuelle">0 MGA</p>
                 </div>
             </div>
             <div class="stat-card">
@@ -184,7 +190,7 @@
     <script src="<?= STATIC_URL ?>/js/data.js"></script>
     <!-- <script src="../js/interets.js"></script> -->
     <script>
-        const apiBase = "http://localhost:80/banque/ws";
+        const apiBase = "<?=API_URL?>";
         let chartInstance = null;
 
         function ajax(method, url, data, callback) {
@@ -205,17 +211,20 @@
 
         function filterInterests() {
             const moisDebut = document.getElementById('moisDebut').value;
+            const anneeDebut = document.getElementById('anneeDebut').value;
             const moisFin = document.getElementById('moisFin').value;
+            const anneeFin = document.getElementById('anneeFin').value;
+
 
             // if (!moisDebut || !moisFin) {
             //     alert("Veuillez sélectionner les deux périodes.");
             //     return;
             // }
 
-            const [anneeDebut, moisDebutNum] = moisDebut.split('-');
-            const [anneeFin, moisFinNum] = moisFin.split('-');
+            // const [anneeDebut, moisDebutNum] = moisDebut.split('-');
+            // const [anneeFin, moisFinNum] = moisFin.split('-');
 
-            const params = `mois_debut=${parseInt(moisDebutNum)}&annee_debut=${anneeDebut}&mois_fin=${parseInt(moisFinNum)}&annee_fin=${anneeFin}`;
+            const params = `mois_debut=${parseInt(moisDebut)}&annee_debut=${anneeDebut}&mois_fin=${parseInt(moisFin)}&annee_fin=${anneeFin}`;
 
             ajax('GET', `/interets/par-mois?${params}`, null, function(data) {
                 afficherInterets(data);

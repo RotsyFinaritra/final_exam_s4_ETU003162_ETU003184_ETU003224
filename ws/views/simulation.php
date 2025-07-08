@@ -101,7 +101,7 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M12 2v20m8-10H4" />
                                     </svg>
-                                    Montant du Prêt (€) *
+                                    Montant du Prêt (MGA) *
                                 </label>
                                 <input type="number" id="sim-montant" name="montant" required min="0" step="0.01" placeholder="Ex: 50 000">
                                 <div class="input-hint" id="montant-hint"></div>
@@ -203,7 +203,7 @@
                                 </svg>
                                 Mensualité
                             </div>
-                            <span id="result-mensualite" class="result-value primary">0 €</span>
+                            <span id="result-mensualite" class="result-value primary">0 MGA</span>
                         </div>
                         <div class="result-item">
                             <div class="result-label">
@@ -212,7 +212,7 @@
                                 </svg>
                                 Total à Payer
                             </div>
-                            <span id="result-total" class="result-value">0 €</span>
+                            <span id="result-total" class="result-value">0 MGA</span>
                         </div>
                         <div class="result-item">
                             <div class="result-label">
@@ -221,7 +221,7 @@
                                 </svg>
                                 Total Intérêts
                             </div>
-                            <span id="result-interets" class="result-value">0 €</span>
+                            <span id="result-interets" class="result-value">0 MGA</span>
                         </div>
                         <div class="result-item">
                             <div class="result-label">
@@ -310,15 +310,15 @@
                     <div class="summary-stats">
                         <div class="summary-item">
                             <span>Total Capital:</span>
-                            <span id="summary-capital" class="summary-value">0 €</span>
+                            <span id="summary-capital" class="summary-value">0 MGA</span>
                         </div>
                         <div class="summary-item">
                             <span>Total Intérêts:</span>
-                            <span id="summary-interets" class="summary-value">0 €</span>
+                            <span id="summary-interets" class="summary-value">0 MGA</span>
                         </div>
                         <div class="summary-item">
                             <span>Total Général:</span>
-                            <span id="summary-total" class="summary-value primary">0 €</span>
+                            <span id="summary-total" class="summary-value primary">0 MGA</span>
                         </div>
                     </div>
                 </div>

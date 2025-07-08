@@ -30,9 +30,9 @@ class AmortissementPDF extends fpdf
         $this->Cell(15, 10, 'N°', 1, 0, 'C', true);
         $this->Cell(30, 10, 'Date', 1, 0, 'C', true);
         $this->Cell(30, 10, 'Capital', 1, 0, 'C', true);
-        $this->Cell(30, 10, 'Intérêts', 1, 0, 'C', true);
+        $this->Cell(30, 10, utf8_decode('Intérêts'), 1, 0, 'C', true);
         $this->Cell(25, 10, 'Assurance', 1, 0, 'C', true);
-        $this->Cell(30, 10, 'Mensualité', 1, 0, 'C', true);
+        $this->Cell(30, 10, utf8_decode('Mensualité'), 1, 0, 'C', true);
         $this->Cell(30, 10, 'Solde', 1, 1, 'C', true);
 
         // Corps
@@ -55,20 +55,21 @@ class AmortissementPDF extends fpdf
         // En-têtes
         $this->SetFont('Arial', 'B', 10);
         $this->SetFillColor(78, 51, 102);
-        $this->SetTextColor(255, 255, 255);
+        $this->SetTextColor(255, 0, 0);
         $this->SetFont('Arial', '', 11);
         $this->Cell(0, 8, 'Client : ' . utf8_decode($nomClient), 0, 1);
-        $this->Cell(0, 8, 'Montant Emprunté : ' . number_format($montant, 2, ',', ' ') . ' €', 0, 1);
-        $this->Cell(0, 8, 'Durée : ' . $duree . ' mois', 0, 1);
+        $this->Cell(0, 8, utf8_decode('Montant Emprunté : ') . number_format($montant, 2, ',', ' ') . ' MGA', 0, 1);
+        $this->Cell(0, 8, utf8_decode('Durée : ') . $duree . ' mois', 0, 1);
         $this->Ln(5);
-
+        
+        $this->SetTextColor(255, 255, 255);
         $this->Cell(15, 10, 'N°', 1, 0, 'C', true);
-        $this->Cell(30, 10, 'mois', 1, 0, 'C', true);
-        $this->Cell(30, 10, 'annee', 1, 0, 'C', true);
+        $this->Cell(15, 10, 'mois', 1, 0, 'C', true);
+        $this->Cell(15, 10, 'annee', 1, 0, 'C', true);
         $this->Cell(30, 10, 'Capital', 1, 0, 'C', true);
-        $this->Cell(30, 10, 'Intérêts', 1, 0, 'C', true);
+        $this->Cell(30, 10, utf8_decode('Intérêts'), 1, 0, 'C', true);
         $this->Cell(25, 10, 'Assurance', 1, 0, 'C', true);
-        $this->Cell(30, 10, 'Mensualité', 1, 0, 'C', true);
+        $this->Cell(30, 10, utf8_decode('Mensualité'), 1, 0, 'C', true);
         $this->Cell(30, 10, 'Solde', 1, 1, 'C', true);
 
         // Corps
@@ -79,8 +80,8 @@ class AmortissementPDF extends fpdf
         foreach ($tableau as $row) {
             $this->Cell(15, 8, $row['numero'], 1, 0, 'C');
             // $this->Cell(30, 8, date('Y-m-d', strtotime($row['date_paiement'])), 1, 0, 'C');
-            $this->Cell(30, 8, $row['mois'], 1, 0, 'R');
-            $this->Cell(30, 8, $row['annee'], 1, 0, 'R');
+            $this->Cell(15, 8, $row['mois'], 1, 0, 'R');
+            $this->Cell(15, 8, $row['annee'], 1, 0, 'R');
             $this->Cell(30, 8, number_format($row['amortissement'], 2, ',', ' '), 1, 0, 'R');
             $this->Cell(30, 8, number_format($row['interet'], 2, ',', ' '), 1, 0, 'R');
             $this->Cell(25, 8, number_format($row['assurance'], 2, ',', ' '), 1, 0, 'R');
