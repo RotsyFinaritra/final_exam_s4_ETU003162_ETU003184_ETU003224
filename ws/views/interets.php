@@ -258,6 +258,12 @@
         `;
                 tbody.appendChild(tr);
             }
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth()+1).padStart(2,'0');
+            const moisActuel= `${year}-${month}`;
+            const interetMoisActuel = data[moisActuel]!== undefined ? data[moisActuel] : 0 ;
+            document.getElementById('interets-mois').innerText = `${interetMoisActuel}`
 
             document.getElementById('total-interets').innerText = `${totalInterets.toLocaleString()} Ar`;
             const moyenne = totalPrets ? (totalInterets / totalPrets).toFixed(0) : 0;
