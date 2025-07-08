@@ -11,5 +11,6 @@ require_once __DIR__ . '/routes/demande_routes.php';
 require_once __DIR__ . '/routes/TypePretRoutes.php';
 require_once __DIR__ . '/routes/capitalRoutes.php';
 require_once __DIR__ . '/routes/Interet_route.php';
+require_once __DIR__ . '/routes/Simulation_routes.php';
 
 Flight::start();

@@ -12,6 +12,43 @@
     <link rel="stylesheet" href="<?= STATIC_URL ?>/css/simulation.css">
     <link rel="stylesheet" href="<?= STATIC_URL ?>/css/tables.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .table-container {
+    margin-top: 30px;
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    padding: 1rem;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.styled-table thead {
+    background-color: #007bff;
+    color: white;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+.styled-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+    </style>
 </head>
 
 <body>
@@ -118,6 +155,29 @@
                 }
             };
             xhr.send(data);
+        }
+
+        function filterInterests() {
+            const moisDebut = document.getElementById('moisDebut').value;
+            const anneeDebut = document.getElementById('anneeDebut').value;
+            const moisFin = document.getElementById('moisFin').value;
+            const anneeFin = document.getElementById('anneeFin').value;
+
+
+            // if (!moisDebut || !moisFin) {
+            //     alert("Veuillez sélectionner les deux périodes.");
+            //     return;
+            // }
+
+            // const [anneeDebut, moisDebutNum] = moisDebut.split('-');
+            // const [anneeFin, moisFinNum] = moisFin.split('-');
+
+            const params = `mois_debut=${parseInt(moisDebut)}&annee_debut=${anneeDebut}&mois_fin=${parseInt(moisFin)}&annee_fin=${anneeFin}`;
+
+            ajax('GET', `/montant/par-mois?${params}`, null, function(data) {
+                afficherInterets(data);
+                updateChartWithData(data);
+            });
         }
     </script>
 </body>

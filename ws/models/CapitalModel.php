@@ -9,11 +9,12 @@ class CapitalModel
     {
         $this->db = getDB();
     }
+
     public function getCapitalEnCours()
     {
         $stmt = $this->db->query("SELECT montant FROM capital LIMIT 1");
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ? $row['montant'] : 0;
+        return $row ? $row['montant'] : null; // Retourne null au lieu de 0
     }
 
     public function updateCapitalEnCours($montant)
@@ -34,8 +35,8 @@ class CapitalModel
         ");
             $stmtInsert->execute([
                 date('Y-m-d'),
-                3,                 
-                abs($montant_actu - $montant), 
+                3,
+                abs($montant_actu - $montant),
                 1
             ]);
 
@@ -46,6 +47,16 @@ class CapitalModel
         } catch (Exception $e) {
             $this->db->rollBack();
             throw $e;
+        }
+    }
+
+    public function insertCapitalEnCours($montant)
+    {
+        try {
+            $stmt = $this->db->prepare("INSERT INTO capital (montant) VALUES (?)");
+            return $stmt->execute([$montant]);
+        } catch (Exception $e) {
+            return false;
         }
     }
 

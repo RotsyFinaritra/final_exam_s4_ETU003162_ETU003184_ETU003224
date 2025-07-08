@@ -10,3 +10,5 @@ Flight::route('PUT /mouvements/@id', [$controller, 'update']);
 Flight::route('DELETE /mouvements/@id', [$controller, 'delete']);
 Flight::route('GET /types-mouvement', [$controller, 'getTypes']);
 
+Flight::route('GET /capitalSolde', [$controller, 'getCapitalMontant']);
+

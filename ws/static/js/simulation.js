@@ -86,8 +86,9 @@ function validateSimulationInputs() {
 }
 
 function calculerSimulation() {
+    const select = document.getElementById('sim-type').value;
     const montant = parseFloat(document.getElementById('sim-montant')?.value);
-    const taux = parseFloat(document.getElementById('sim-taux')?.value) / 100; 
+    const taux = parseFloat(document.getElementById('sim-taux')?.value) / 100;
     const duree = parseInt(document.getElementById('sim-duree')?.value);
     const dateDebut = document.getElementById('sim-date')?.value;
     const nomClient = document.getElementById('sim-nom')?.value;
@@ -111,12 +112,12 @@ function calculerSimulation() {
 
     // const totalAPayer = mensualite * duree;
     // const totalInterets = totalAPayer - montant;
-    
+
     const mensualiteSansAssurance = (montant * (taux * Math.pow(1 + taux, duree))) /
-    (Math.pow(1 + taux, duree) - 1);
-    mensualite =mensualiteSansAssurance
+        (Math.pow(1 + taux, duree) - 1);
+    mensualite = mensualiteSansAssurance
     const mensualiteAvecAssurance = mensualiteSansAssurance + assuranceMensuelle;
-    
+
     const totalAPayer = mensualiteAvecAssurance * duree;
     const totalInterets = (mensualiteSansAssurance * duree) - montant;
     const tauxTotal = (totalInterets / montant) * 100;
@@ -127,6 +128,7 @@ function calculerSimulation() {
 
     currentSimulation = {
         montant,
+        id_type_pret: select,
         tauxMensuel: taux,
         dureeMois: duree,
         mensualite,
@@ -143,6 +145,7 @@ function calculerSimulation() {
     // Display results
     displaySimulationResults(currentSimulation);
 }
+
 
 function generateAmortizationTable(montant, tauxMensuel, duree, dateDebut, assuranceMensuelle) {
     const tableau = [];
@@ -425,85 +428,9 @@ function setupSaveSimulationForm() {
     });
 }
 
-function loadSavedSimulations() {
-    const simulations = dataManager.getSimulations();
-    const container = document.getElementById('simulations-list');
 
-    if (!container) return;
 
-    if (simulations.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-state-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                        <polyline points="17,21 17,13 7,13 7,21"/>
-                        <polyline points="7,3 7,8 15,8"/>
-                    </svg>
-                </div>
-                <p>Aucune simulation sauvegardée</p>
-            </div>
-        `;
-        return;
-    }
 
-    container.innerHTML = simulations.map(sim => `
-        <div class="simulation-card">
-            <div class="simulation-header">
-                <h4>${sim.nom}</h4>
-                <div class="simulation-actions">
-                    <button class="btn-sm btn-secondary" onclick="loadSimulation('${sim.id}')">
-                        Charger
-                    </button>
-                    <button class="btn-sm btn-danger" onclick="deleteSimulation('${sim.id}')">
-                        Supprimer
-                    </button>
-                </div>
-            </div>
-            <div class="simulation-details">
-                <div class="simulation-stat">
-                    <span>Montant:</span>
-                    <span>${dataManager.formatCurrency(sim.montant)}</span>
-                </div>
-                <div class="simulation-stat">
-                    <span>Durée:</span>
-                    <span>${sim.dureeMois} mois</span>
-                </div>
-                <div class="simulation-stat">
-                    <span>Mensualité:</span>
-                    <span>${dataManager.formatCurrency(sim.mensualite)}</span>
-                </div>
-            </div>
-            ${sim.description ? `<p class="simulation-description">${sim.description}</p>` : ''}
-            <div class="simulation-date">
-                Créée le ${dataManager.formatDate(sim.dateCreation)}
-            </div>
-        </div>
-    `).join('');
-}
-
-function loadSimulation(id) {
-    const simulations = dataManager.getSimulations();
-    const simulation = simulations.find(s => s.id === id);
-
-    if (!simulation) return;
-
-    // Fill form with simulation data
-    document.getElementById('sim-montant').value = simulation.montant;
-    document.getElementById('sim-taux').value = simulation.tauxMensuel;
-    document.getElementById('sim-duree').value = simulation.dureeMois;
-    if (simulation.nomClient) {
-        document.getElementById('sim-nom').value = simulation.nomClient;
-    }
-    if (simulation.dateDebut) {
-        document.getElementById('sim-date').value = simulation.dateDebut.split('T')[0];
-    }
-
-    currentSimulation = simulation;
-    displaySimulationResults(simulation);
-
-    showNotification('Simulation chargée avec succès', 'success');
-}
 
 function deleteSimulation(id) {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette simulation ?')) {

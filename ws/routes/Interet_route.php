@@ -15,5 +15,6 @@ Flight::route('GET /interets/par-mois',  [$pretcontroller, 'getInteretsParMoisJs
 
 // Flight::route('GET /types-pret', [$typePretController, 'getAllTypePret']);
 
+Flight::route('GET /montant/par-mois', [$pretController,'getMontantParMoisJson']);
 
 ?>

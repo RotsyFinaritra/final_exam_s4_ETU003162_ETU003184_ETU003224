@@ -99,3 +99,6 @@ INSERT INTO pret_statut_pret (id_pret, id_statut_pret, date) VALUES
 INSERT INTO pret_statut_pret (id_pret, id_statut_pret, date) VALUES
 (2, 1, '2025-02-15'), -- En cours
 (2, 2, '2026-03-01'); -- Devient remboursé
+
+
+SET FOREIGN_KEY_CHECKS = 0;

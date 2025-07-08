@@ -5,7 +5,7 @@ class DataManager {
     }
 
     initializeData() {
-        // Initialize with sample data if not exists
+        //des donnees de test 
         if (!localStorage.getItem('bankLoanData')) {
             const initialData = {
                 capital: [
@@ -60,9 +60,19 @@ class DataManager {
         }
     }
 
+    // getData() {
+    //     return JSON.parse(localStorage.getItem('bankLoanData') || '{}');
+    // }
+    // Mauvais : la fonction renvoie "undefined" car l'AJAX n'a pas encore fini
+    
     getData() {
-        return JSON.parse(localStorage.getItem('bankLoanData') || '{}');
+        let result;
+        ajax('GET', '/simulations', null, function (response) {
+            result = response;  // Trop tard : AJAX est asynchrone
+        });
+        return result;  // Renvoie undefined
     }
+
 
     saveData(data) {
         localStorage.setItem('bankLoanData', JSON.stringify(data));
@@ -231,9 +241,9 @@ class DataManager {
             .reduce((sum, c) => sum + c.montant, 0);
 
         const totalTypes = typesPret.filter(t => t.statut === 'actif').length;
-        
+
         const pendingRequests = demandes.filter(d => d.statut === 'en_attente').length;
-        
+
         const currentMonth = new Date().getMonth() + 1;
         const currentYear = new Date().getFullYear();
         const monthlyInterest = interets
@@ -268,7 +278,7 @@ function closeModal(modalId) {
         modal.style.display = 'none';
         modal.classList.remove('show');
         document.body.style.overflow = 'auto';
-        
+
         // Reset form if exists
         const form = modal.querySelector('form');
         if (form) {
@@ -288,10 +298,10 @@ function showNotification(message, type = 'info') {
         <span>${message}</span>
         <button onclick="this.parentElement.remove()">&times;</button>
     `;
-    
+
     // Add to page
     document.body.appendChild(notification);
-    
+
     // Auto remove after 5 seconds
     setTimeout(() => {
         if (notification.parentElement) {
@@ -301,7 +311,7 @@ function showNotification(message, type = 'info') {
 }
 
 // Close modals when clicking outside
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
     if (event.target.classList.contains('modal')) {
         event.target.style.display = 'none';
         event.target.classList.remove('show');

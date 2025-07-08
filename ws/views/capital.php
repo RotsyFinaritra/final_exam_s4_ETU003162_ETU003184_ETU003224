@@ -42,7 +42,7 @@
             </svg>
         </div>
         <div class="stat-content">
-            <h3>Montant Total</h3>
+            <h3>Solde en Cours</h3>
             <p class="stat-value" id="stat-total-montant">0</p>
         </div>
     </div>
@@ -82,7 +82,6 @@
                     <input type="date" id="date_mouvement" class="form-input" style="flex: 1;">
                     <input type="number" step="0.01" id="montant" placeholder="Montant" class="form-input" style="flex: 1;">
                     <select id="id_type_mvt" class="form-input" style="flex: 1;"></select>
-                    <input type="number" id="id_capital" placeholder="ID Capital" class="form-input" style="flex: 1;">
                     <button class="btn-primary" onclick="ajouterOuModifier()">Ajouter / Modifier</button>
                     <button class="btn-secondary" onclick="resetForm()">Annuler</button>
                 </div>
@@ -95,7 +94,6 @@
                         <th>Date</th>
                         <th>Type de mouvement</th>
                         <th>Montant</th>
-                        <th>ID Capital</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -132,92 +130,85 @@
             });
         }
 
+        function chargerCapitalEnCours() {
+            ajax("GET", "/capitalSolde", null, (data) => {
+                const soldeElement = document.getElementById("stat-total-montant");
+                if (data && data.montant !== undefined) {
+                    soldeElement.textContent = parseFloat(data.montant).toFixed(2);
+                } else {
+                    soldeElement.textContent = "0.00";
+                }
+            });
+        }
+
         function chargerMouvements() {
             ajax("GET", "/mouvements", null, (data) => {
                 const tbody = document.querySelector("#table-capital");
                 tbody.innerHTML = "";
-
-                let montantDepot = 0;
-                let montantInteret = 0;
-                let montantRetrait = 0;
                 let montants = [];
 
                 data.forEach(e => {
-                    const montant = parseFloat(e.montant);
-                    montants.push(montant);
-
-                    // Calcul du montant total en fonction du type
-                    switch (parseInt(e.id_type_mouvement)) {
-                        case 1:
-                            montantDepot += montant;
-                            break;
-                        case 2:
-                            montantInteret += montant;
-                            break;
-                        case 3:
-                            montantRetrait += montant;
-                            break;
-                    }
-
+                    montants.push(parseFloat(e.montant));
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
                         <td>${e.id}</td>
                         <td>${e.date_mouvement}</td>
                         <td>${e.type_mouvement}</td>
-                        <td>${montant.toFixed(2)}</td>
-                        <td>${e.id_capital}</td>
+                        <td>${e.montant}</td>
                         <td>
-                            <button class="btn-primary" onclick='remplirFormulaire(${JSON.stringify(e)})'>Modifier</button>
                             <button class="btn-danger" onclick='supprimerMouvement(${e.id})'>Supprimer</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
 
-                // Mise à jour des statistiques
                 document.getElementById("stat-total").textContent = data.length;
-
-                const montantTotal = montantDepot + montantInteret - montantRetrait;
-                document.getElementById("stat-total-montant").textContent = montantTotal.toFixed(2);
-
                 if (montants.length > 0) {
                     document.getElementById("stat-min").textContent = Math.min(...montants).toFixed(2);
                     document.getElementById("stat-max").textContent = Math.max(...montants).toFixed(2);
                 }
+                
+                // Charger le capital en cours après avoir chargé les mouvements
+                chargerCapitalEnCours();
             });
         }
 
 
         function ajouterOuModifier() {
-            const id = document.getElementById("id").value;
-            const date_mouvement = document.getElementById("date_mouvement").value;
-            const montant = document.getElementById("montant").value;
-            const id_type_mvt = document.getElementById("id_type_mvt").value;
-            const id_capital = document.getElementById("id_capital").value;
-
-            const data = `date_mouvement=${encodeURIComponent(date_mouvement)}&id_type_mvt=${id_type_mvt}&montant=${montant}&id_capital=${id_capital}`;
-
-            if (id) {
-                ajax("PUT", `/mouvements/${id}`, data, () => {
-                    resetForm();
-                    chargerMouvements();
-                    alert("Mouvement modifié !");
-                });
+    const id = document.getElementById("id").value;
+    const date_mouvement = document.getElementById("date_mouvement").value;
+    const montant = document.getElementById("montant").value;
+    const id_type_mvt = document.getElementById("id_type_mvt").value;
+    const data = `date_mouvement=${encodeURIComponent(date_mouvement)}&id_type_mvt=${id_type_mvt}&montant=${montant}`;
+    
+    if (id) {
+        ajax("PUT", `/mouvements/${id}`, data, (response) => {
+            if (response.success) {
+                resetForm();
+                chargerMouvements();
+                alert("Mouvement modifié !");
             } else {
-                ajax("POST", "/mouvements", data, () => {
-                    resetForm();
-                    chargerMouvements();
-                    alert("Mouvement ajouté !");
-                });
+                showErrorPopup(response.error || "Erreur lors de la modification");
             }
-        }
+        });
+    } else {
+        ajax("POST", "/mouvements", data, (response) => {
+            if (response.success) {
+                resetForm();
+                chargerMouvements();
+                alert("Mouvement ajouté !");
+            } else {
+                showErrorPopup(response.error || "Erreur lors de l'ajout");
+            }
+        });
+    }
+}
 
         function remplirFormulaire(e) {
             document.getElementById("id").value = e.id;
             document.getElementById("date_mouvement").value = e.date_mouvement;
             document.getElementById("montant").value = e.montant;
             document.getElementById("id_type_mvt").value = e.id_type_mvt || "";
-            document.getElementById("id_capital").value = e.id_capital;
         }
 
         function supprimerMouvement(id) {
@@ -234,13 +225,89 @@
             document.getElementById("date_mouvement").value = "";
             document.getElementById("montant").value = "";
             document.getElementById("id_type_mvt").value = "";
-            document.getElementById("id_capital").value = "";
         }
 
         document.addEventListener("DOMContentLoaded", () => {
             chargerTypesMouvement();
             chargerMouvements();
         });
+
+
+        
+function showErrorPopup(message) {
+    // Créer le popup d'erreur
+    const popup = document.createElement('div');
+    popup.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        border: 2px solid #dc3545;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-width: 400px;
+        text-align: center;
+    `;
+    
+    popup.innerHTML = `
+        <div style="color: #dc3545; font-weight: bold; margin-bottom: 15px;">
+            ⚠️ Erreur
+        </div>
+        <div style="margin-bottom: 20px; color: #333;">
+            ${message}
+        </div>
+        <button onclick="closeErrorPopup()" style="
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        ">
+            Fermer
+        </button>
+    `;
+    
+    // Créer l'overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'error-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    `;
+    
+    document.body.appendChild(overlay);
+    document.body.appendChild(popup);
+    
+    // Fermer en cliquant sur l'overlay
+    overlay.onclick = closeErrorPopup;
+    
+    // Stocker la référence du popup
+    window.currentErrorPopup = popup;
+}
+
+function closeErrorPopup() {
+    const popup = window.currentErrorPopup;
+    const overlay = document.getElementById('error-overlay');
+    
+    if (popup) {
+        document.body.removeChild(popup);
+        window.currentErrorPopup = null;
+    }
+    
+    if (overlay) {
+        document.body.removeChild(overlay);
+    }
+}
+
     </script>
 </body>
 </html>
