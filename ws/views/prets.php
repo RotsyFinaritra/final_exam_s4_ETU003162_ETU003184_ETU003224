@@ -20,21 +20,29 @@
   <h1>Liste des prêts</h1>
 
   <div style="margin-bottom: 10px;">
-    <label>Type prêt :</label>
-    <select id="filtreTypePret">
-      <option value="">-- Tous --</option>
-    </select>
+    <div>
+      <label>Type prêt :</label>
+      <select id="filtreTypePret">
+        <option value="">-- Tous --</option>
+      </select>
+    </div>
 
-    <label>Client :</label>
-    <select id="filtreClient">
-      <option value="">-- Tous --</option>
-    </select>
+    <div>
+      <label>Client :</label>
+      <select id="filtreClient">
+        <option value="">-- Tous --</option>
+      </select>
+    </div>
 
-    <label>Date début :</label>
-    <input type="date" id="filtreDateDebut">
+    <div>
+      <label>Date début :</label>
+      <input type="date" id="filtreDateDebut">
+    </div>
 
-    <label>Date fin :</label>
-    <input type="date" id="filtreDateFin">
+    <div>
+      <label>Date fin :</label>
+      <input type="date" id="filtreDateFin">
+    </div>
 
     <button onclick="filtrerPrets()">Filtrer</button>
     <button onclick="resetFiltre()">Réinitialiser</button>
