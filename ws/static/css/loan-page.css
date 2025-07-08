@@ -1,0 +1,352 @@
+/* CSS spécifique pour la page Liste des prêts */
+
+/* Container principal de la page */
+body {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Styles pour les titres */
+h1 {
+  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 2rem 0 1.5rem 0;
+  text-align: left;
+  position: relative;
+}
+
+h1:first-of-type {
+  margin-top: 1rem;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 2px;
+}
+
+/* Conteneur des actions principales */
+.page-actions {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  align-items: center;
+}
+
+/* Lien "Ajouter une demande de prêt" */
+a[href*="demande_form_view"] {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+a[href*="demande_form_view"]:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+a[href*="demande_form_view"]::before {
+  content: '+';
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Bouton Tester */
+form[action*="generateTableauAmortissement"] {
+  display: inline-block;
+}
+
+form[action*="generateTableauAmortissement"] button {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  color: #475569;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+form[action*="generateTableauAmortissement"] button:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+/* Section des filtres */
+div[style*="margin-bottom: 10px"] {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin: 2rem 0 !important;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  align-items: end;
+}
+
+/* Labels des filtres */
+div[style*="margin-bottom: 10px"] label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Champs de saisie et sélecteurs */
+div[style*="margin-bottom: 10px"] select,
+div[style*="margin-bottom: 10px"] input[type="date"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+div[style*="margin-bottom: 10px"] select:focus,
+div[style*="margin-bottom: 10px"] input[type="date"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Boutons de filtrage */
+div[style*="margin-bottom: 10px"] button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  margin-top: 1rem;
+}
+
+/* Bouton Filtrer */
+button[onclick="filtrerPrets()"] {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  margin-right: 1rem;
+}
+
+button[onclick="filtrerPrets()"]:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+}
+
+/* Bouton Réinitialiser */
+button[onclick="resetFiltre()"] {
+  background: white;
+  color: #6b7280;
+  border: 2px solid #e5e7eb;
+}
+
+button[onclick="resetFiltre()"]:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+/* Table des prêts */
+#table-prets {
+  width: 100%;
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin-top: 2rem;
+}
+
+/* En-tête du tableau */
+#table-prets thead {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+#table-prets thead th {
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Corps du tableau */
+#table-prets tbody tr {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+#table-prets tbody tr:hover {
+  background: #f8fafc;
+}
+
+#table-prets tbody td {
+  padding: 1.25rem 1.5rem;
+  color: #475569;
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+/* Première colonne (ID) */
+#table-prets tbody td:first-child {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Colonne montant */
+#table-prets tbody td:last-child {
+  font-weight: 700;
+  color: #059669;
+}
+
+/* Styles pour les badges de type de prêt */
+.loan-type-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.loan-type-immobilier {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.loan-type-automobile {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.loan-type-personnel {
+  background: #fae8ff;
+  color: #86198f;
+}
+
+.loan-type-etudiant {
+  background: #fed7aa;
+  color: #c2410c;
+}
+
+/* État vide */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6b7280;
+}
+
+.empty-state h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  div[style*="margin-bottom: 10px"] {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  #table-prets {
+    font-size: 0.75rem;
+  }
+  
+  #table-prets thead th,
+  #table-prets tbody td {
+    padding: 0.75rem 1rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  a[href*="demande_form_view"],
+  form[action*="generateTableauAmortissement"] button {
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#table-prets tbody tr {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Indicateur de chargement */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.loading::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
