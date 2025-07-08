@@ -384,7 +384,7 @@
     </div>
 
     <script src="<?= STATIC_URL?>/js/data.js"></script>
-    <!-- <script src="<?= STATIC_URL ?>/js/simulation.js"></script> -->
+
     <script src="<?= STATIC_URL?>/js/simulation.js"></script>
 
     <script>

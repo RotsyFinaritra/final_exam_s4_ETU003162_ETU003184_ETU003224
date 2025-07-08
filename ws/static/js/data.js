@@ -204,6 +204,7 @@ class DataManager {
     }
 
     formatCurrency(amount) {
+        console.log("lkfdnlkn");
         return new Intl.NumberFormat('fr-FR', {
             style: 'currency',
             currency: 'MGA'

@@ -187,7 +187,11 @@
         </div>
     </div>
 
-    <script src="<?= STATIC_URL ?>/js/data.js"></script>
+    <script src="<?= STATIC_URL ?>/js/data.js">
+
+        // console.log(`${STATIC_URL}`)
+    </script>
+
     <!-- <script src="../js/interets.js"></script> -->
     <script>
         const apiBase = "<?=API_URL?>";
