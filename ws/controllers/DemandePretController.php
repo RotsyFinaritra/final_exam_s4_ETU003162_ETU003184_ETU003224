@@ -1,18 +1,24 @@
 <?php
 require_once __DIR__ . '/../models/DemandePretModel.php';
 require_once __DIR__ . '/../models/DemandeStatutDemmandeModel.php';
+require_once __DIR__ . '/../models/CapitalModel.php';
+
 
 class DemandePretController
 {
     private $demandePretModel;
     private $demandeStatutModel;
     private $pretModel;
+    private $capitalModel;
+
 
     public function __construct()
     {
         $this->demandePretModel = new DemandePretModel();
         $this->demandeStatutModel = new DemandeStatutDemmandeModel();
         $this->pretModel = new PretModel();
+        $this->capitalModel = new CapitalModel();
+
     }
     public function getAllDemandeWithStatutFiltre()
     {
@@ -52,29 +58,40 @@ class DemandePretController
             $interval = new DateInterval('P' . $duree . 'M');
             $dateDebut->add($interval);
         }
+        $capital = $this->capitalModel->getCapitalEnCours();
+        if($capital < $data['montant']){
+            Flight::json([
+                'message' => 'Demande non validée',
+                'id' => $id,
+                'capital' => $capital
+            ]);
+        }else{
+            $pret = [
+                'id_client'     => $data['id_client'],
+                'id_type_pret'  => $data['id_type_pret'],
+                'montant'       => $data['montant'],
+                'duree'         => $data['duree_demande'],
+                'id_type_remboursement'=> $data['id_type_remboursement'] ?? 0,
+                'assurance'     => $data['assurance'] ?? 0,
+                'date_debut'    => $data['date_debut'],
+                'date_fin'      => $dateFin,
+                'delai'         => $data['delai'] ?? 0
+            ];
+            // $pret
+            $this->pretModel->insert($pret);
+            $id_pret = $this->pretModel->getLastInsertId();
+            $this->pretModel->generateTableauAmortissement($id_pret);
+            $data['id_statut_demande'] = 2;
+            $id_statut_valide = 2;
+            $idStatut = $id_statut_valide;
+            $this->demandePretModel->update($id, $data);
+            $this->demandeStatutModel->addStatutToDemande($id, $idStatut);
+            $this->capitalModel->updateCapitalEnCours($capital-$data['montant']);          
+            Flight::json(['message' => 'Demande créée avec succès', 'id' => $id]);
 
+        }
         // $pret['duree']=$data['duree_demande'];
-        $pret = [
-            'id_client'     => $data['id_client'],
-            'id_type_pret'  => $data['id_type_pret'],
-            'montant'       => $data['montant'],
-            'duree'         => $data['duree_demande'],
-            'id_type_remboursement'=> $data['id_type_remboursement'] ?? 0,
-            'assurance'     => $data['assurance'] ?? 0,
-            'date_debut'    => $data['date_debut'],
-            'date_fin'      => $dateFin,
-            'delai'         => $data['delai'] ?? 0
-        ];
-        // $pret
-        $this->pretModel->insert($pret);
-        $id_pret = $this->pretModel->getLastInsertId();
-        $this->pretModel->generateTableauAmortissement($id_pret);
-        $data['id_statut_demande'] = 2;
-        $id_statut_valide = 2;
-        $idStatut = $id_statut_valide;
-        $this->demandePretModel->update($id, $data);
-        $this->demandeStatutModel->addStatutToDemande($id, $idStatut);
-        // Flight::json(['message' => 'Demande créée avec succès', 'id' => $id]);
+             // Flight::json(['message' => 'Demande créée avec succès', 'id' => $id]);
     }
     public function rejeter()
     {
