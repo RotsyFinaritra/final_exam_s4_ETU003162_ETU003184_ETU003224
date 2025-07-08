@@ -1,4 +1,4 @@
-// Simulation de Prêt Script
+
 document.addEventListener('DOMContentLoaded', function () {
     loadTypesForSimulation();
     setupSimulationForm();
@@ -87,7 +87,7 @@ function validateSimulationInputs() {
 
 function calculerSimulation() {
     const montant = parseFloat(document.getElementById('sim-montant')?.value);
-    const taux = parseFloat(document.getElementById('sim-taux')?.value) / 100; // Convert to decimal
+    const taux = parseFloat(document.getElementById('sim-taux')?.value) / 100; 
     const duree = parseInt(document.getElementById('sim-duree')?.value);
     const dateDebut = document.getElementById('sim-date')?.value;
     const nomClient = document.getElementById('sim-nom')?.value;
